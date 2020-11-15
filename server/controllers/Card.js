@@ -154,7 +154,7 @@ const drawCard = (newLocation, cards) => {
   Card.CardModel.findByIdAndUpdate(cardToChange._id, cardToChange, () => {console.log("Found and Updated to a hand")});
 
   // Return the card for if it's needed
-  return deck[index];
+  return cardToChange;
 }
 
 const newGame = (req, res, cards) => {
