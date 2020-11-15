@@ -56,6 +56,56 @@ const loadCardsFromServer = () => {
   });
 };
 
+const handleHButton = (e) => {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#hitBttn").serialize(), loadCardsFromServer);
+}
+const handleSButton = (e) => {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#standBttn").serialize(), loadCardsFromServer);
+}
+const handleNButton = (e) => {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#newGameBttn").serialize(), loadCardsFromServer);
+}
+
+const HitButton = (props) => {
+  return (
+    <form id="hitBttn"
+        onSubmit={handleHButton}
+        className="mainForm"
+    >
+      <input type="hidden" name="step" value={"hit"}/>
+      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input className="formSubmit" type="submit" value="Hit" />
+    </form>
+    );
+};
+const StandButton = (props) => {
+  return (
+    <form id="standBttn"
+        onSubmit={handleSButton}
+        className="mainForm"
+    >
+      <input type="hidden" name="step" value={"stand"}/>
+      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input className="formSubmit" type="submit" value="Stand" />
+    </form>
+    );
+};
+const NewGameButton = (props) => {
+  return (
+    <form id="newGameBttn"
+        onSubmit={handleNButton}
+        className="mainForm"
+    >
+      <input type="hidden" name="step" value={"new"}/>
+      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input className="formSubmit" type="submit" value="New Game" />
+    </form>
+    );
+};
+
 const setup = function(csrf) {
   ReactDOM.render(
     <CardList cards={[]} />, document.querySelector("#playerCards")
@@ -63,14 +113,21 @@ const setup = function(csrf) {
   ReactDOM.render(
     <CardList cards={[]} />, document.querySelector("#dealerCards")
   );
+  ReactDOM.render(
+    <HitButton csrf={csrf} />, document.querySelector("#hitButton")
+  );
+  ReactDOM.render(
+    <StandButton csrf={csrf} />, document.querySelector("#standButton")
+  );
+  ReactDOM.render(
+    <NewGameButton csrf={csrf} />, document.querySelector("#newButton")
+  );
 
   let dataSend = {step : "new", "_csrf" : csrf};
 
-  sendAjax('POST', '/playerAction', dataSend, (data) => {
-    console.log("player action new: "+data.message);
-  });
+  sendAjax('POST', '/playerAction', dataSend, loadCardsFromServer);
 
-  loadCardsFromServer();
+  
 };
 
 const getToken = () => {

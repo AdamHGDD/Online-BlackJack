@@ -72,7 +72,7 @@ var LoginWindow = function LoginWindow(props) {
 var SignupWindow = function SignupWindow(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "signupForm",
-    name: "singupForm",
+    name: "signupForm",
     onSubmit: handleSignup,
     action: "/signup",
     method: "POST",

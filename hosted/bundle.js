@@ -58,6 +58,81 @@ var loadCardsFromServer = function loadCardsFromServer() {
   });
 };
 
+var handleHButton = function handleHButton(e) {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#hitBttn").serialize(), loadCardsFromServer);
+};
+
+var handleSButton = function handleSButton(e) {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#standBttn").serialize(), loadCardsFromServer);
+};
+
+var handleNButton = function handleNButton(e) {
+  e.preventDefault();
+  sendAjax('POST', 'playerAction', $("#newGameBttn").serialize(), loadCardsFromServer);
+};
+
+var HitButton = function HitButton(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "hitBttn",
+    onSubmit: handleHButton,
+    className: "mainForm"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "step",
+    value: "hit"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "formSubmit",
+    type: "submit",
+    value: "Hit"
+  }));
+};
+
+var StandButton = function StandButton(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "standBttn",
+    onSubmit: handleSButton,
+    className: "mainForm"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "step",
+    value: "stand"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "formSubmit",
+    type: "submit",
+    value: "Stand"
+  }));
+};
+
+var NewGameButton = function NewGameButton(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "newGameBttn",
+    onSubmit: handleNButton,
+    className: "mainForm"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "step",
+    value: "new"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "formSubmit",
+    type: "submit",
+    value: "New Game"
+  }));
+};
+
 var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
     cards: []
@@ -65,14 +140,20 @@ var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
     cards: []
   }), document.querySelector("#dealerCards"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(HitButton, {
+    csrf: csrf
+  }), document.querySelector("#hitButton"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(StandButton, {
+    csrf: csrf
+  }), document.querySelector("#standButton"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(NewGameButton, {
+    csrf: csrf
+  }), document.querySelector("#newButton"));
   var dataSend = {
     step: "new",
     "_csrf": csrf
   };
-  sendAjax('POST', '/playerAction', dataSend, function (data) {
-    console.log("player action new: " + data.message);
-  });
-  loadCardsFromServer();
+  sendAjax('POST', '/playerAction', dataSend, loadCardsFromServer);
 };
 
 var getToken = function getToken() {
