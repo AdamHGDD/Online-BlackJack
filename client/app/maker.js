@@ -1,130 +1,62 @@
-const handleDomo = (e) => {
-  console.log("handle domo");
+const handleCard = (e) => {
+  console.log("handle card");
 
   e.preventDefault();
 
-  $("#domoMessage").animate({width:'hide'},350);
+  $("#cardMessage").animate({width:'hide'},350);
 
-  if($("#domoName").val() == '' || $("#domoAge").val() == '') {
+  if($("#cardName").val() == '' || $("#cardAge").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
-    loadDomosFromServer();
+  sendAjax('POST', $("#cardForm").attr("action"), $("#cardForm").serialize(), function() {
+    loadCardsFromServer();
   });
 
   return false;
 };
 
-const handleDomoDelete = (e) => {
-  console.log("handle domo delete");
-  
-  e.preventDefault();
-
-  $("#domoMessage").animate({width:'hide'},350);
-
-  if($("#domoNameD").val() == '') {
-    handleError("RAWR! Name is required");
-    return false;
-  }
-
-  console.log("domo delete action: "+$("#domoDel").attr("action"));
-  console.log("domo delete serialize: "+$("#domoDel").serialize());
-
-  sendAjax('POST', $("#domoDel").attr("action"), $("#domoDel").serialize(), function() {
-    loadDomosFromServer();
-  });
-
-  return false;
-};
-
-const DomoForm = (props) => {
-  return (
-    <form id="domoForm"
-      onSubmit={handleDomo}
-      name="domoForm"
-      action="/maker"
-      method="POST"
-      className="domoForm"
-    >
-      <label htmlFor="name">Name: </label>
-      <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-      <label htmlFor="age">Age: </label>
-      <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
-      <label htmlFor="image">Image: </label>
-      <input id="image" type="text" name="image" placeholder="Domo Image"/>
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="makeDomoSubmit" type="submit" value="Make Domo" />
-    </form>
-  );
-};
-const DomoDel = (props) => {
-  return (
-    <form id="domoDel"
-      onSubmit={handleDomoDelete}
-      name="domoDel"
-      action="/delete"
-      method="POST"
-      className="domoDel"
-    >
-      <label htmlFor="name">Name: </label>
-      <input id="domoNameD" type="text" name="name" placeholder="Domo Name" />
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="makeDomoSubmit" type="submit" value="Delete Domo" />
-    </form>
-  );
-};
-
-const DomoList = function(props) {
-  if(props.domos.length === 0) {
+const CardList = function(props) {
+  if(props.cards.length === 0) {
     return (
-      <div className="domoList">
-        <h3 className="emptyDomo">No Domos yet</h3>
+      <div className="cardList">
+        <h3 className="emptyCard">No Cards yet</h3>
       </div>
     );
   }
 
-  const domoNodes = props.domos.map(function(domo) {
+  const cardNodes = props.cards.map(function(card) {
     return (
-      <div key={domo._id} className="domo">
-        <img src={domo.image} alt="domo face" className="domoFace" />
-        <h3 className="domoName"> Name: {domo.name} </h3>
-        <h3 className="domoAge"> Age: {domo.age} </h3>
+      <div key={card._id} className="card">
+        <img src={card.image} alt="card face" className="cardFace" />
+        <h3 className="cardName">{card.rank} of {card.suit}</h3>
       </div>
     );
   });
 
   return (
-    <div className="domoList">
-      {domoNodes}
+    <div className="cardList">
+      {cardNodes}
     </div>
   );
 };
 
-const loadDomosFromServer = () => {
-  console.log("load domos from server");
-  sendAjax('GET', '/getDomos', null, (data) => {
+const loadCardsFromServer = () => {
+  console.log("load cards from server");
+  sendAjax('GET', '/getCards', null, (data) => {
     ReactDOM.render(
-      <DomoList domos={data.domos} />, document.querySelector("#domos")
+      <CardList cards={data.cards} />, document.querySelector("#cards")
     );
   });
 };
 
 const setup = function(csrf) {
   ReactDOM.render(
-    <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+    <CardList cards={[]} />, document.querySelector("#cards")
   );
 
-  ReactDOM.render(
-    <DomoDel csrf={csrf} />, document.querySelector("#deleteDomo")
-  );
-
-  ReactDOM.render(
-    <DomoList domos={[]} />, document.querySelector("#domos")
-  );
-
-  loadDomosFromServer();
+  loadCardsFromServer();
 };
 
 const getToken = () => {

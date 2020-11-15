@@ -1,157 +1,63 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
-  console.log("handle domo");
+var handleCard = function handleCard(e) {
+  console.log("handle card");
   e.preventDefault();
-  $("#domoMessage").animate({
+  $("#cardMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
+  if ($("#cardName").val() == '' || $("#cardAge").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+  sendAjax('POST', $("#cardForm").attr("action"), $("#cardForm").serialize(), function () {
+    loadCardsFromServer();
   });
   return false;
 };
 
-var handleDomoDelete = function handleDomoDelete(e) {
-  console.log("handle domo delete");
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
-
-  if ($("#domoNameD").val() == '') {
-    handleError("RAWR! Name is required");
-    return false;
-  }
-
-  console.log("domo delete action: " + $("#domoDel").attr("action"));
-  console.log("domo delete serialize: " + $("#domoDel").serialize());
-  sendAjax('POST', $("#domoDel").attr("action"), $("#domoDel").serialize(), function () {
-    loadDomosFromServer();
-  });
-  return false;
-};
-
-var DomoForm = function DomoForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "domoForm",
-    onSubmit: handleDomo,
-    name: "domoForm",
-    action: "/maker",
-    method: "POST",
-    className: "domoForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
-    type: "text",
-    name: "name",
-    placeholder: "Domo Name"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoAge",
-    type: "text",
-    name: "age",
-    placeholder: "Domo Age"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "image"
-  }, "Image: "), /*#__PURE__*/React.createElement("input", {
-    id: "image",
-    type: "text",
-    name: "image",
-    placeholder: "Domo Image"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "hidden",
-    name: "_csrf",
-    value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
-    type: "submit",
-    value: "Make Domo"
-  }));
-};
-
-var DomoDel = function DomoDel(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "domoDel",
-    onSubmit: handleDomoDelete,
-    name: "domoDel",
-    action: "/delete",
-    method: "POST",
-    className: "domoDel"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoNameD",
-    type: "text",
-    name: "name",
-    placeholder: "Domo Name"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "hidden",
-    name: "_csrf",
-    value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
-    type: "submit",
-    value: "Delete Domo"
-  }));
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
+var CardList = function CardList(props) {
+  if (props.cards.length === 0) {
     return /*#__PURE__*/React.createElement("div", {
-      className: "domoList"
+      className: "cardList"
     }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyDomo"
-    }, "No Domos yet"));
+      className: "emptyCard"
+    }, "No Cards yet"));
   }
 
-  var domoNodes = props.domos.map(function (domo) {
+  var cardNodes = props.cards.map(function (card) {
     return /*#__PURE__*/React.createElement("div", {
-      key: domo._id,
-      className: "domo"
+      key: card._id,
+      className: "card"
     }, /*#__PURE__*/React.createElement("img", {
-      src: domo.image,
-      alt: "domo face",
-      className: "domoFace"
+      src: card.image,
+      alt: "card face",
+      className: "cardFace"
     }), /*#__PURE__*/React.createElement("h3", {
-      className: "domoName"
-    }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "domoAge"
-    }, " Age: ", domo.age, " "));
+      className: "cardName"
+    }, card.rank, " of ", card.suit));
   });
   return /*#__PURE__*/React.createElement("div", {
-    className: "domoList"
-  }, domoNodes);
+    className: "cardList"
+  }, cardNodes);
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  console.log("load domos from server");
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+var loadCardsFromServer = function loadCardsFromServer() {
+  console.log("load cards from server");
+  sendAjax('GET', '/getCards', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
+      cards: data.cards
+    }), document.querySelector("#cards"));
   });
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
-    csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoDel, {
-    csrf: csrf
-  }), document.querySelector("#deleteDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
-  }), document.querySelector("#domos"));
-  loadDomosFromServer();
+  ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
+    cards: []
+  }), document.querySelector("#cards"));
+  loadCardsFromServer();
 };
 
 var getToken = function getToken() {
@@ -167,13 +73,13 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({
+  $("#cardMessage").animate({
     width: 'toggle'
   }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
+  $("#cardMessage").animate({
     width: 'hide'
   }, 350);
   window.location = response.redirect;

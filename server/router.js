@@ -8,14 +8,13 @@ const mid = require('./middleware');
 // If on any other page make sure that they aren't supposed to be logged in
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
-  app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
+  app.get('/getCards', mid.requiresLogin, controllers.Card.getCards);
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
   app.get('/logout', mid.requiresSecure, mid.requiresLogout, controllers.Account.logout);
-  app.get('/maker', mid.requiresLogin, controllers.Domo.makerPage);
-  app.post('/maker', mid.requiresLogin, controllers.Domo.make);
-  app.post('/delete', mid.requiresLogin, controllers.Domo.delete);
+  app.get('/maker', mid.requiresLogin, controllers.Card.makerPage);
+  // app.post('/maker', mid.requiresLogin, controllers.Card.make);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 
