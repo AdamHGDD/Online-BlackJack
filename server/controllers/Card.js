@@ -140,8 +140,8 @@ const drawCard = (newLocation, cards) => {
     for (let i = 0; i < cards.length; i++) {
       if(cards[i].location === "discard"){
         // Switch location to save and then update/save
-        cardToChange[i].location = "deck";
-        Card.CardModel.findByIdAndUpdate(cardToChange._id, cardToChange, (err, docs) => {console.log("Found and Updated to deck")});
+        cards[i].location = "deck";
+        Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], () => {console.log("Found and Updated to deck")});
       }
     }
   }
@@ -149,7 +149,7 @@ const drawCard = (newLocation, cards) => {
   // Take a card from the deck and bring it to a new location (player's hand or dealer's hand)
   let index = [Math.floor(Math.random() * deck.length)];
   deck[index].location = newLocation;
-  Card.CardModel.findByIdAndUpdate(deck[index]._id, deck[index], (err, docs) => {console.log("Found and Updated to a hand")});
+  Card.CardModel.findByIdAndUpdate(deck[index]._id, deck[index], () => {console.log("Found and Updated to a hand")});
 
   // Return the card for if it's needed
   return deck[index];
@@ -163,7 +163,7 @@ const newGame = (req, res, cards) => {
       // Switch location to save and then update/save
       cards[i].location = "discard";
       // console.dir(cardToChange);
-      Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], (err, docs) => {console.log("Found and Updated to discard")});
+      Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], () => {console.log("Found and Updated to discard")});
     }
   }
   // New game so draw 2 for player and 1 for dealer
@@ -176,7 +176,7 @@ const newGame = (req, res, cards) => {
 
 const drawPlayerCard = (req, res, cards) => {
   // Draw a single card
-  drawCard("player");
+  drawCard("player", cards);
   // Response message
   return res.status(200).json({ message: 'Drew a card for the player successful' });
 }
@@ -225,13 +225,12 @@ const playerAction = (request, response) => {
     switch(request.body.step) {
       case "new":
         return newGame(req, res, docs);
-        break;
       case "hit":
-        return drawPlayerCard(request, response, docs);
-        break;
+        return drawPlayerCard(req, res, docs);
       case "stand":
-        return stand(request, response, docs);
-        break;
+        return stand(req, res, docs);
+      default:
+        return newGame(req, res, docs);
     }
   });
 }
