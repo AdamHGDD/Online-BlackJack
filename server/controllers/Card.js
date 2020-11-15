@@ -140,16 +140,18 @@ const drawCard = (newLocation, cards) => {
     for (let i = 0; i < cards.length; i++) {
       if(cards[i].location === "discard"){
         // Switch location to save and then update/save
-        cards[i].location = "deck";
+        let cardToChange = cards[i];
+        cardToChange.location = "deck";
         Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], () => {console.log("Found and Updated to deck")});
+        deck.push(cardToChange);
       }
     }
   }
 
   // Take a card from the deck and bring it to a new location (player's hand or dealer's hand)
-  let index = [Math.floor(Math.random() * deck.length)];
-  deck[index].location = newLocation;
-  Card.CardModel.findByIdAndUpdate(deck[index]._id, deck[index], () => {console.log("Found and Updated to a hand")});
+  let cardToChange = deck[Math.floor(Math.random() * deck.length)];
+  cardToChange.location = newLocation;
+  Card.CardModel.findByIdAndUpdate(cardToChange._id, cardToChange, () => {console.log("Found and Updated to a hand")});
 
   // Return the card for if it's needed
   return deck[index];
@@ -161,7 +163,8 @@ const newGame = (req, res, cards) => {
   for (let i = 0; i < cards.length; i++) {
     if(cards[i].location === "dealer" || cards[i].location === "player"){
       // Switch location to save and then update/save
-      cards[i].location = "discard";
+      let cardToChange = cards[i];
+      cardToChange.location = "discard";
       // console.dir(cardToChange);
       Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], () => {console.log("Found and Updated to discard")});
     }
