@@ -44,17 +44,31 @@ const CardList = function(props) {
 
 const loadCardsFromServer = () => {
   console.log("load cards from server");
-  sendAjax('GET', '/getCards', null, (data) => {
+  sendAjax('GET', '/getPlayerCards', null, (data) => {
     ReactDOM.render(
-      <CardList cards={data.cards} />, document.querySelector("#cards")
+      <CardList cards={data.cards} />, document.querySelector("#playerCards")
+    );
+  });
+  sendAjax('GET', '/getDealerCards', null, (data) => {
+    ReactDOM.render(
+      <CardList cards={data.cards} />, document.querySelector("#dealerCards")
     );
   });
 };
 
 const setup = function(csrf) {
   ReactDOM.render(
-    <CardList cards={[]} />, document.querySelector("#cards")
+    <CardList cards={[]} />, document.querySelector("#playerCards")
   );
+  ReactDOM.render(
+    <CardList cards={[]} />, document.querySelector("#dealerCards")
+  );
+
+  let dataSend = {step : "new", "_csrf" : csrf};
+
+  sendAjax('POST', '/playerAction', dataSend, (data) => {
+    console.log("player action new: "+data.message);
+  });
 
   loadCardsFromServer();
 };

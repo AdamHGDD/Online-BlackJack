@@ -9,11 +9,14 @@ const mid = require('./middleware');
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
   app.get('/getCards', mid.requiresLogin, controllers.Card.getCards);
+  app.get('/getPlayerCards', mid.requiresLogin, controllers.Card.getPlayerCards);
+  app.get('/getDealerCards', mid.requiresLogin, controllers.Card.getDealerCards);
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
   app.get('/logout', mid.requiresSecure, mid.requiresLogout, controllers.Account.logout);
   app.get('/maker', mid.requiresLogin, controllers.Card.makerPage);
+  app.post('/playerAction', mid.requiresLogin, controllers.Card.playerAction);
   // app.post('/maker', mid.requiresLogin, controllers.Card.make);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };

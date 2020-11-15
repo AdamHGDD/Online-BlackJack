@@ -46,17 +46,32 @@ var CardList = function CardList(props) {
 
 var loadCardsFromServer = function loadCardsFromServer() {
   console.log("load cards from server");
-  sendAjax('GET', '/getCards', null, function (data) {
+  sendAjax('GET', '/getPlayerCards', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
       cards: data.cards
-    }), document.querySelector("#cards"));
+    }), document.querySelector("#playerCards"));
+  });
+  sendAjax('GET', '/getDealerCards', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
+      cards: data.cards
+    }), document.querySelector("#dealerCards"));
   });
 };
 
 var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
     cards: []
-  }), document.querySelector("#cards"));
+  }), document.querySelector("#playerCards"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(CardList, {
+    cards: []
+  }), document.querySelector("#dealerCards"));
+  var dataSend = {
+    step: "new",
+    "_csrf": csrf
+  };
+  sendAjax('POST', '/playerAction', dataSend, function (data) {
+    console.log("player action new: " + data.message);
+  });
   loadCardsFromServer();
 };
 

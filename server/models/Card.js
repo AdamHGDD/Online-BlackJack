@@ -70,7 +70,7 @@ CardSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return CardModel.find(search).select('rank suit value image').lean().exec(callback);
+  return CardModel.find(search).lean().exec(callback);
 };
 
 // Search with location requirements
@@ -80,7 +80,7 @@ CardSchema.statics.findByLocation = (ownerId, loc, callback) => {
     location: loc,
   };
 
-  return CardModel.find(search).select('rank suit value image').lean().exec(callback);
+  return CardModel.find(search).lean().exec(callback);
 };
 
 // Define model
