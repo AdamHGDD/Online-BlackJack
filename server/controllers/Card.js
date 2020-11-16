@@ -30,9 +30,6 @@ const makeCard = (rnk, st, val, img, ownr, cards) => {
   // Save new card
   const cardPromise = newCard.save();
 
-  // Finish
-  // cardPromise.then(() => res.json({ redirect: '/maker' }));
-
   // Complete and return the saved object
   return cardPromise;
 };
@@ -121,39 +118,89 @@ const getDealerCards = (request, response) => {
   });
 };
 
+const calculateCards = (location, cards) => {
+  // First get the relevant cards
+  let relCards = [];
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].location === location) {
+      relCards.push(cards[i]);
+    }
+  }
+
+  // Then calculate raw value
+  let value = 0;
+  for (let i = 0; i < relCards.length; i++) {
+    value += relCards[i].value;
+  }
+
+  // Check for aces if over 21
+  for (let i = 0; i < relCards.length; i++) {
+    if(value > 21 && relCards[i].value === 11){
+      value -= 10;
+    }
+  }
+
+  // If still over 21 reduce to 0
+  if(value > 21) {value = 0;}
+  // Blackjack is better than just a normal 21
+  if(value === 21 && relCards.length === 2) {value = 22;}
+
+  // Return calculated value
+  console.log("Calculated value for: "+location+", value: "+value);
+  return value;
+}
+
 // Helper methods for playing the game
 const drawCard = (newLocation, cards) => {
   console.log('draw a card');
-  // console.dir(cards);
+  // New arrays based on cards
+  let deck = [];
+  let newCardList = [];
+
   // Find the cards that are in the deck
-  const deck = [];
   for (let i = 0; i < cards.length; i++) {
     if (cards[i].location === 'deck') {
       deck.push(cards[i]);
     }
+    // Save it to the return list
+    newCardList.push(cards[i]);
   }
 
   // Check if the deck is empty
   if (!(deck.length > 1)) {
+    // Refresh the card list
+    newCardList = [];
     // Put discard back into the deck
     for (let i = 0; i < cards.length; i++) {
       if (cards[i].location === 'discard') {
-        // Switch location to save and then update/save
+        // Switch location
         const cardToChange = cards[i];
         cardToChange.location = 'deck';
+        // Update the card
         Card.CardModel.findByIdAndUpdate(cards[i]._id, cards[i], () => { console.log('Found and Updated to deck'); });
         deck.push(cardToChange);
+        // Save it to the return list
+        newCardList.push(cards[i]);
+      }
+      else{
+        // Save it to the return list
+        newCardList.push(cards[i]);
       }
     }
   }
 
   // Take a card from the deck and bring it to a new location (player's hand or dealer's hand)
   const cardToChange = deck[Math.floor(Math.random() * deck.length)];
+  // Find index in array
+  let indexToChange = newCardList.indexOf(cardToChange);
   cardToChange.location = newLocation;
+  // Update the card in the database
   Card.CardModel.findByIdAndUpdate(cardToChange._id, cardToChange, () => { console.log('Found and Updated to a hand'); });
+  // Update the card in the list
+  newCardList[indexToChange] = cardToChange;
 
-  // Return the card for if it's needed
-  return cardToChange;
+  // Return the new version of cards
+  return newCardList;
 };
 
 const newGame = (req, res, cards) => {
@@ -169,40 +216,44 @@ const newGame = (req, res, cards) => {
     }
   }
   // New game so draw 2 for player and 1 for dealer
-  drawCard('player', cards);
-  drawCard('player', cards);
-  drawCard('dealer', cards);
+  let newCards = drawCard('player', cards);
+  newCards = drawCard('player', newCards);
+  newCards = drawCard('dealer', newCards);
+  // console.log("print new cards: "+newCards.length);
+  // console.dir(newCards);
   // Response message
   return res.status(200).json({ message: 'New game has started' });
 };
 
 const drawPlayerCard = (req, res, cards) => {
   // Draw a single card
-  drawCard('player', cards);
+  let newCards = drawCard('player', cards);
+  // Check if the game is over
+  if(calculateCards("player", newCards) > 20 || calculateCards("player", newCards) < 2){
+    // Move onto the end of the game
+    return stand(req, res, newCards);
+  }
   // Response message
   return res.status(200).json({ message: 'Drew a card for the player successful' });
 };
 
 const stand = (req, res, cards) => {
   // Player has finished, now finish for the dealer
-  let dealerValue;
-  // calculate value
-  while (dealerValue < 17) {
-    drawCard('dealer', cards);
-    // recalculate value
+  let newCards = cards;
+  // Calculate value to see if the dealer needs a new card
+  while (calculateCards("dealer", newCards) < 17) {
+    // Draw a new card for dealer if they need a new card
+    newCards = drawCard('dealer', newCards);
   }
   // Compare to player
-  let playerValue;
-  // calculate player value
-  // Player wins and gets payout
-  if (playerValue > dealerValue) {
+  if (calculateCards("player", newCards) > calculateCards("dealer", newCards)) {
     // money += bet
     // Game over win
     return res.status(200).json({ message: 'You have won this hand' });
   }
   // Dealer wins in a tie
-
   // money -= bet
+
   // Game over loss
   return res.status(200).json({ message: 'You have lost this hand' });
 };
