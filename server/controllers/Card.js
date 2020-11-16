@@ -218,23 +218,11 @@ const newGame = (req, res, cards) => {
   // New game so draw 2 for player and 1 for dealer
   let newCards = drawCard('player', cards);
   newCards = drawCard('player', newCards);
-  newCards = drawCard('dealer', newCards);
+  drawCard('dealer', newCards);
   // console.log("print new cards: "+newCards.length);
   // console.dir(newCards);
   // Response message
   return res.status(200).json({ message: 'New game has started' });
-};
-
-const drawPlayerCard = (req, res, cards) => {
-  // Draw a single card
-  let newCards = drawCard('player', cards);
-  // Check if the game is over
-  if(calculateCards("player", newCards) > 20 || calculateCards("player", newCards) < 2){
-    // Move onto the end of the game
-    return stand(req, res, newCards);
-  }
-  // Response message
-  return res.status(200).json({ message: 'Drew a card for the player successful' });
 };
 
 const stand = (req, res, cards) => {
@@ -256,6 +244,18 @@ const stand = (req, res, cards) => {
 
   // Game over loss
   return res.status(200).json({ message: 'You have lost this hand' });
+};
+
+const drawPlayerCard = (req, res, cards) => {
+  // Draw a single card
+  let newCards = drawCard('player', cards);
+  // Check if the game is over
+  if(calculateCards("player", newCards) > 20 || calculateCards("player", newCards) < 2){
+    // Move onto the end of the game
+    return stand(req, res, newCards);
+  }
+  // Response message
+  return res.status(200).json({ message: 'Drew a card for the player successful' });
 };
 
 const playerAction = (request, response) => {
