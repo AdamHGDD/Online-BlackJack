@@ -73,7 +73,7 @@ const HitButton = (props) => {
   return (
     <form id="hitBttn"
         onSubmit={handleHButton}
-        className="mainForm"
+        className="actForm"
     >
       <input type="hidden" name="step" value={"hit"}/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
@@ -85,7 +85,7 @@ const StandButton = (props) => {
   return (
     <form id="standBttn"
         onSubmit={handleSButton}
-        className="mainForm"
+        className="actForm"
     >
       <input type="hidden" name="step" value={"stand"}/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
@@ -97,7 +97,7 @@ const NewGameButton = (props) => {
   return (
     <form id="newGameBttn"
         onSubmit={handleNButton}
-        className="mainForm"
+        className="actForm"
     >
       <input type="hidden" name="step" value={"new"}/>
       <input type="hidden" name="_csrf" value={props.csrf}/>

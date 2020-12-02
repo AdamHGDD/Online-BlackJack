@@ -77,7 +77,7 @@ var HitButton = function HitButton(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "hitBttn",
     onSubmit: handleHButton,
-    className: "mainForm"
+    className: "actForm"
   }, /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "step",
@@ -97,7 +97,7 @@ var StandButton = function StandButton(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "standBttn",
     onSubmit: handleSButton,
-    className: "mainForm"
+    className: "actForm"
   }, /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "step",
@@ -117,7 +117,7 @@ var NewGameButton = function NewGameButton(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "newGameBttn",
     onSubmit: handleNButton,
-    className: "mainForm"
+    className: "actForm"
   }, /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "step",

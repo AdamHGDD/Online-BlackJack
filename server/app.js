@@ -14,7 +14,7 @@ const csrf = require('csurf');
 const redis = require('redis');
 
 // Get port
-const port = process.env.PORT || process.env.NODE_PORT || 3001;
+const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // Get database
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/CardMaker';

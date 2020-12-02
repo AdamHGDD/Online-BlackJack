@@ -6,13 +6,21 @@ const { Card } = models;
 
 // Make a card
 const makeCard = (rnk, st, val, img, ownr, cards) => {
+
+  let imag = img;
+  // Test for AD
+  if(imag === "/assets/img/AD.png")
+  {
+    imag = "/assets/img/AceD.png"
+  }
+
   // Create card js object
   const cardData = {
     rank: rnk,
     suit: st,
     value: val,
     location: 'deck',
-    image: img,
+    image: imag,
     owner: ownr,
   };
 
@@ -229,7 +237,7 @@ const stand = (req, res, cards) => {
   // Player has finished, now finish for the dealer
   let newCards = cards;
   // Calculate value to see if the dealer needs a new card
-  while (calculateCards("dealer", newCards) < 17) {
+  while (calculateCards("dealer", newCards) < 17 && calculateCards("dealer", newCards) > 1) {
     // Draw a new card for dealer if they need a new card
     newCards = drawCard('dealer', newCards);
   }
