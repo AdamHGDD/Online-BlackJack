@@ -49,6 +49,30 @@ nav:nth-child(1) {
     background-color: #2b2a2c;
 }
 
+.navlinkRight {
+    padding: 5px;
+    padding-top: 12px;
+    padding-left: 20px;
+    color: white;
+    font-family: 'Kaushan Script', cursive;
+    font-size: 1.3em;
+    float: right;
+}
+
+.navlinkRight a, .navlinkRight a:link, .navlinkRight a:visited, .navlinkRight a:hover, .navlinkRight a:active {
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #212121;
+    transition: background-color 0.4s ease;
+}
+
+.navlinkRight a:hover {
+    transition: background-color 0.8s ease;
+    background-color: #2b2a2c;
+}
+
 .cardForm label {
     display: inline-block;
     width: 75px;
@@ -166,9 +190,16 @@ nav:nth-child(1) {
     text-align: center;
     font-family: 'Kaushan Script', cursive;
     color: white;
-    background-color: black;
     border-radius: 15%;
     margin: 1%;
+}
+
+#dealerCards .card{
+    background-color: #602222;
+}
+
+#playerCards .card{
+    background-color: #2b3d5f;
 }
 
 .cardList {

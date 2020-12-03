@@ -28,6 +28,10 @@ const AccountSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  inGame: {
+    type: Boolean,
+    default: false,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

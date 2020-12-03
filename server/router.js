@@ -17,6 +17,7 @@ const router = (app) => {
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/maker', mid.requiresLogin, controllers.Card.makerPage);
   app.post('/playerAction', mid.requiresLogin, controllers.Card.playerAction);
+  app.get('/5chips', mid.requiresLogin, controllers.Card.fiveChips);
   // app.post('/maker', mid.requiresLogin, controllers.Card.make);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
