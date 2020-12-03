@@ -28,6 +28,14 @@ const AccountSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  wins: {
+    type: Number,
+    default: 1,
+  },
+  losses: {
+    type: Number,
+    default: 1,
+  },
   inGame: {
     type: Boolean,
     default: false,
@@ -37,6 +45,7 @@ const AccountSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+// Start with 1 fake win and loss to avoid divide by 0 error
 
 AccountSchema.statics.toAPI = (doc) => ({
   // _id is built into your mongo document and is guaranteed to be unique

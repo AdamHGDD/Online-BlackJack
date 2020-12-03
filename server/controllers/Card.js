@@ -230,6 +230,34 @@ const newGame = (req, res, cards) => {
     return res.status(200).json({ message: 'Still a game going on' });
   }
 
+  // Calculate if the player has been cheating
+  let average = req.session.account.wins / (req.session.account.wins + req.session.account.losses);
+  let theoryAvg = .46;
+  // Calculate Deviation
+  let sum = 0;
+  sum += req.session.account.wins * (1 - average) * (1 - average);
+  sum += req.session.account.losses * (0 - average) * (0 - average);
+  let deviation = Math.sqrt(sum / (req.session.account.wins + req.session.account.losses - 1));
+  // Calculate Standard error and then ZScore
+  let standardError = deviation / Math.sqrt(req.session.account.wins + req.session.account.losses);
+  let zScore = (theoryAvg - average) / standardError;
+  // Prints for double checking math
+  console.log("zScore = "+zScore);
+  console.log("average = "+average);
+  console.log("wins = "+req.session.account.wins);
+  console.log("losses = "+req.session.account.losses);
+  console.log("sum = "+sum);
+  console.log("deviation = "+deviation);
+  console.log("standardError = "+standardError);
+  // Flag account if they're cheating
+  // This formula determines the percent chance that the results were determined by luck
+  // Though this formula accounts for total sample size, it still works better with larger sample sizes
+  // Account will be flagged if there is 99.9% chance you're cheating, or if theres a 99% chance and the sample size is greater than 25, or 95% chance and the sample size is larger than 100
+  if(zScore < -2.35 || (zScore < -1.65 && (req.session.account.wins + req.session.account.losses) > 25) || (zScore < -1.65 && (req.session.account.wins + req.session.account.losses)) > 100)
+  {
+    return res.status(400).json({ message: 'Account is flagged' });
+  }
+
   // Change account
   // Grab user
   const accountToChange = req.session.account;
@@ -274,7 +302,9 @@ const stand = (req, res, cards) => {
 
   // Compare to player
   if (calculateCards("player", newCards) > calculateCards("dealer", newCards)) {
+    // Give money
     accountToChange.chips += 2;
+    accountToChange.wins++;
     // End game
     accountToChange.inGame = false;
     // Update the account in the database
@@ -285,6 +315,7 @@ const stand = (req, res, cards) => {
 
   // Dealer wins in a tie, or if dealer is higher
   // Player has already payed
+  accountToChange.losses++;
   // End game
   accountToChange.inGame = false;
   // Update the account in the database
