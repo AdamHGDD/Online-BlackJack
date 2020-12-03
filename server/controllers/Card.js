@@ -227,7 +227,7 @@ const newGame = (req, res, cards) => {
   // Check account
   if(req.session.account.inGame || req.session.account.chips < 1)
   {
-    return res.status(400).json({ message: 'Previous game wasn\'t finished' });
+    return res.status(200).json({ message: 'Still a game going on' });
   }
 
   // Change account
