@@ -231,15 +231,19 @@ const newGame = (req, res, cards) => {
   }
 
   // Calculate if the player has been cheating
-  let average = req.session.account.wins / (req.session.account.wins + req.session.account.losses);
+  // Get data from account first
+  let wins = req.session.account.wins
+  let losses = req.session.account.losses
+  let total = wins + losses;
+  let average = wins / total;
   let theoryAvg = .46;
   // Calculate Deviation
   let sum = 0;
-  sum += req.session.account.wins * (1 - average) * (1 - average);
-  sum += req.session.account.losses * (0 - average) * (0 - average);
-  let deviation = Math.sqrt(sum / (req.session.account.wins + req.session.account.losses - 1));
+  sum += wins * (1 - average) * (1 - average);
+  sum += losses * (0 - average) * (0 - average);
+  let deviation = Math.sqrt(sum / (total - 1));
   // Calculate Standard error and then ZScore
-  let standardError = deviation / Math.sqrt(req.session.account.wins + req.session.account.losses);
+  let standardError = deviation / Math.sqrt(total);
   let zScore = (theoryAvg - average) / standardError;
   // Prints for double checking math
   console.log("zScore = "+zScore);
@@ -251,9 +255,11 @@ const newGame = (req, res, cards) => {
   console.log("standardError = "+standardError);
   // Flag account if they're cheating
   // This formula determines the percent chance that the results were determined by luck
-  // Though this formula accounts for total sample size, it still works better with larger sample sizes
-  // Account will be flagged if there is 99.9% chance you're cheating, or if theres a 99% chance and the sample size is greater than 25, or 95% chance and the sample size is larger than 100
-  if(zScore < -2.35 || (zScore < -1.65 && (req.session.account.wins + req.session.account.losses) > 25) || (zScore < -1.65 && (req.session.account.wins + req.session.account.losses)) > 100)
+  // Though this accounts for total sample size, it still works better with larger sample sizes
+  // Account will be flagged if there is 99.9% chance you're cheating
+  // or if theres a 99% chance and the sample size is greater than 25
+  // or 95% chance and the sample size is larger than 100
+  if(zScore < -2.35 || (zScore < -1.65 && (total) > 25) || (zScore < -1.65 && (total) > 100))
   {
     return res.status(400).json({ message: 'Account is flagged' });
   }
